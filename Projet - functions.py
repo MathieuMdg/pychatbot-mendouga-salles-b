@@ -76,7 +76,7 @@ def suite_mot(texte:str):
 
 
 # Affiche le contenu d'un fichier donné dans un répertoire donné
-def lecture(directory, file,  extension):
+def lecture(directory, file):
     lecture = ""
     for filename in os.listdir(directory):
         if file in filename:
@@ -87,10 +87,27 @@ def lecture(directory, file,  extension):
     return lecture
 
 
+# Retourne une liste contenant tous les mots d'un texte
+def liste_mot(texte:str):
+    L = []
+    mot = ""
+    for lettre in texte:
+        if lettre != " ":
+            mot = mot + lettre
+        else:
+            L.append(mot)
+            mot = ""
+    return L
+
+
+
+
+
+
 #Calcul le TF d'une chaine de caractère
 def TF(texte: str):
     TF = {}
-    texte_mots = texte.split(" ")
+    texte_mots = liste_mot(texte)
     for elt in texte_mots:
         if elt in TF:
             TF[elt] = TF[elt] + 1
@@ -102,21 +119,44 @@ def TF(texte: str):
 directory = "./speeches"
 files_names = list_of_files(directory, "txt")
 print_list(files_names)
-minuscule(directory, "txt")
-
+minuscule(directory, "txt") # Appel de la fonction minuscule pour créer et remplir le fichier cleaned
 
 
 # Pas encore terminé
-def IDF(directory, extension):
-    files_names = []
-    for filename in os.listdir(directory):
-        if filename.endswith(extension):
-            files_names.append(filename)
+def IDF(directory):
+    dico = {}
+    Liste_files = list_of_files(directory, "txt") #Créer une liste du nom de chaque fichier du dossier
+    Liste_mot = []
+    nbre_fichier = len(Liste_files)
+    for elt in Liste_files:
+        Liste_mot = Liste_mot + liste_mot(lecture(directory, elt)) #puis la fonction lecture pour lire le contenu du fichier et enfin la fonction liste de mot pour créer une liste des mots du fichier.
+    Liste_mot = sans_doublon(Liste_mot)
+    for mot in Liste_mot:
+        nbre_fichier_mot = 0
+        for i in Liste_files:
+            L = []
+            L = liste_mot(lecture(directory, i))
+            if mot in L:
+                nbre_fichier_mot += 1
+            if nbre_fichier_mot == 0:
+                dico[mot] = "pas de mot"
+            else:
+                IDF = math.log((nbre_fichier / nbre_fichier_mot) + 1)
+                dico[mot] = IDF
+    return dico
 
 
 # Effectue le dictionnaire TF de chaque document
 files_cleaned = list_of_files("./cleaned", "txt")
+dictionnaire_files = {}
 for files in files_cleaned:
     print("Le nombre TF du fichier", files, "est :")
-    print(TF(lecture("./cleaned", files, "txt")))
+    print(TF(lecture("./cleaned", files)))
     print("")
+    dictionnaire_files[files] = TF(lecture("./cleaned", files))
+    print(dictionnaire_files)
+
+IDF = IDF("./cleaned")
+for i in range(10):
+    x = str(input("Saisir un mot : "))
+    print(IDF[x])
