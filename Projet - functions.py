@@ -160,3 +160,126 @@ IDF = IDF("./cleaned")
 for i in range(10):
     x = str(input("Saisir un mot : "))
     print(IDF[x])
+
+
+#_______________________________________________________________________________________________________________________________________________________|
+
+def TF(chaine:str):
+
+    assert isinstance(chaine, str)
+    chaine = chaine + " "
+    dico = {}
+    mot = ""
+    for lettres in chaine: 
+        
+        if lettres == " ":
+            
+            if mot in dico:
+                dico[mot] = dico[mot] + 1
+                mot = ""
+                
+            else:
+                dico[mot] = 1
+                mot=""
+            
+        else:
+            mot = mot + lettres
+    return dico
+
+#--------------------------------------------|
+
+def IDF():
+    arr = os.listdir("speeches")
+    txtfiles = []
+    
+    for file in arr:
+        print(file)
+        f = open(f"speeches\{file}", "r+", encoding = "utf-8")
+        
+        for x in f:
+            print(TF(str(f.readline())))
+            txtfiles.append(file)
+        #print(TF(str(f.readline())))
+        #txtfiles.append(file)
+    print(txtfiles)
+    return 0
+
+#____________________________________________________________________________________________________|
+#--------------------------------------------|
+
+def extraction():
+    arr = os.listdir("speeches")
+
+    liste_nomP = []
+    
+    for file in arr:
+        decod = False
+        stock = ""
+        print(file)
+        for x in range(len(file)-4):
+
+            if decod == True and ord(str.lower(file[x])) >= 97 and ord(str.lower(file[x])) <= 122:
+                stock += file[x]
+
+            if file[x] == "_":
+                decod = True
+                
+        if stock not in liste_nomP:
+            liste_nomP.append(stock)
+
+    return liste_nomP
+
+#--------------------------------------------|
+prenomP = {"Chirac": "Jacques", "Giscard dEstaing": "Valéry", "Hollande": "François", "Macron": "Emmanuel", "Mitterrand": "François", "Sarkozy": "Nicolas"}
+
+def associa(listeP):
+    pren = []
+    for x in listeP:
+        pren.append(prenomP[x])
+    
+    return pren
+
+#--------------------------------------------|
+
+def conversMin():
+    arr = os.listdir("speeches")
+    
+    for file in arr:
+
+        f = open(f"speeches\{file}", "r+", encoding = "utf-8")
+        g = open(f"cleaned\{file}", "w", encoding = "utf-8")
+        for x in f:
+    
+            g.write(str(str.lower(x)))
+    f.close()
+    g.close()
+    return None
+
+#--------------------------------------------|
+listPonc = ["'", "-", "_", ",", "?", "!", ".", ";", ":", "/", "(", ")"]
+
+def triPonc():
+    
+    brr = os.listdir("cleaned")
+    
+    for file in brr:
+
+        f_init = open(f"cleaned\{file}", "r", encoding = "utf-8")     
+        lecture = f_init.readlines()
+        f_init.close()
+        
+        for x in lecture:
+            fall = ""
+            for y in x:
+                
+                if y in listPonc:
+                    fall += " "
+                else:
+                    fall += y
+            print(fall)
+            f_trs = open(f"cleaned\{file}", "w", encoding = "utf-8")
+            f_trs.write(fall)
+            f_trs.close() 
+
+
+    return None
