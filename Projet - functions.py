@@ -81,22 +81,6 @@ directory = "./speeches"
 files_names = list_of_files(directory, "txt")
 print(minuscule(directory, "txt"))
 
-for filename in os.listdir("./cleaned2"):
-    f = open("./cleaned2" + "/" + filename, "r")
-    TF = {}
-    Liste = []
-    contenu = f.readlines()
-    for ligne in contenu:
-        TF = {}
-        Liste = ligne.split(" ")
-        for elt in Liste:
-            if elt in TF:
-                TF[elt] = TF[elt] + 1
-            else:
-                TF[elt] = 1
-        print(Liste)
-        print(TF)
-
 
 #Calcul le TF d'une chaine de caractère
 def TF(texte: str):
