@@ -13,15 +13,6 @@ def list_of_files(directory, extension):
 def print_list(files_names):
     print(files_names)
 
-# Retourne une chaine de caractère en minuscule
-def minuscule(texte:str):
-    minuscule = ""
-    for car in texte:
-        if ord(car) >= ord('A') and ord(car) <= ord('Z'):
-            car = chr(ord(car) + 32)
-        minuscule = minuscule + car
-    return minuscule
-
 
 # Extrait les noms de fichier de la liste et ajoute les noms des présidents dans une nouvelle liste
 def extraction(nom_fichier: list):
@@ -53,8 +44,8 @@ def prenom_nom(liste: list):
     return L
 
 
-# Créer un fichier avec les textes en minuscule
-def minuscule(directory, extension):
+# Créer un fichier avec les textes en minuscule et sans -,; etc
+def cleaned(directory, extension):
     files_names = []
     os.mkdir("cleaned")
     for filename in os.listdir(directory):
@@ -71,6 +62,14 @@ def minuscule(directory, extension):
         f2.close()
     f.close()
 
+
+def minuscule(texte:str):
+    minuscule = ""
+    for car in texte:
+        if ord(car) >= ord('A') and ord(car) <= ord('Z'):
+            car = chr(ord(car) + 32)
+        minuscule = minuscule + car
+    return minuscule
 
 # Supprime tous les ',?! etc des textes d'un fichier
 def suite_mot(texte:str):
@@ -128,10 +127,10 @@ def TF(texte: str):
 directory = "./speeches"
 files_names = list_of_files(directory, "txt")
 print_list(files_names)
-minuscule(directory, "txt") # Appel de la fonction minuscule pour créer et remplir le fichier cleaned
+cleaned(directory, "txt") # Appel de la fonction minuscule pour créer et remplir le fichier cleaned
 
 
-# Retourne le coeff IDH de chaque mot des textes
+# retourne l'indice IDF des documents textes d'un répertoire
 def IDF(directory):
     dico = {}
     Liste_files = list_of_files(directory, "txt") #Créer une liste du nom de chaque fichier du dossier
@@ -164,12 +163,6 @@ for files in files_cleaned:
     print("")
     dictionnaire_files[files] = TF(lecture("./cleaned", files))
     print(dictionnaire_files)
-
-IDF = IDF("./cleaned")
-for i in range(10):
-    x = str(input("Saisir un mot : "))
-    print(IDF[x])
-
 
 #_______________________________________________________________________________________________________________________________________________________|
 
