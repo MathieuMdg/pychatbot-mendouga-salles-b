@@ -13,6 +13,15 @@ def list_of_files(directory, extension):
 def print_list(files_names):
     print(files_names)
 
+# Retourne une chaine de caractère en minuscule
+def minuscule(texte:str):
+    minuscule = ""
+    for car in texte:
+        if ord(car) >= ord('A') and ord(car) <= ord('Z'):
+            car = chr(ord(car) + 32)
+        minuscule = minuscule + car
+    return minuscule
+
 
 # Extrait les noms de fichier de la liste et ajoute les noms des présidents dans une nouvelle liste
 def extraction(nom_fichier: list):
@@ -55,9 +64,9 @@ def minuscule(directory, extension):
         f = open(directory + "/" + fichier, "r")
         contenu = f.readlines()
         for ligne in contenu:
-            ligne = ligne.lower()
+            ligne = minuscule(ligne)
             ligne = suite_mot(ligne)
-            f2 = open("./cleaned" + "/" + fichier.lower(), "a")
+            f2 = open("./cleaned" + "/" + minuscule(fichier), "a")
             f2.write(ligne)
         f2.close()
     f.close()
@@ -122,7 +131,7 @@ print_list(files_names)
 minuscule(directory, "txt") # Appel de la fonction minuscule pour créer et remplir le fichier cleaned
 
 
-# Pas encore terminé
+# Retourne le coeff IDH de chaque mot des textes
 def IDF(directory):
     dico = {}
     Liste_files = list_of_files(directory, "txt") #Créer une liste du nom de chaque fichier du dossier
