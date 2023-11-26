@@ -285,3 +285,378 @@ def triPonc():
 
 
     return None
+
+#FONCTIONS
+
+from math import log
+import os
+from string import ascii_uppercase
+import time as time
+
+#VARIABLES
+
+liste_pres = []
+liste_MI = []
+   
+
+#____________________________________________________________________________________________________|
+#--------------------------------------------|
+#Fonction qui extrait à partir des noms des fichiers, le nom des présidents.
+
+def extraction_nom():
+    arr = os.listdir("speeches")
+
+    liste_nomP = []
+    
+    for file in arr:
+        decod = False
+        stock = ""
+        print(file)
+        for x in range(len(file)-4):
+
+            if decod == True and ord(str.lower(file[x])) >= 97 and ord(str.lower(file[x])) <= 122:
+                stock += file[x]
+
+            if file[x] == "_":
+                decod = True
+                
+        if stock not in liste_nomP:
+            liste_nomP.append(stock)
+
+    return liste_nomP
+
+#--------------------------------------------|
+prenomP = {"Chirac": "Jacques", "Giscard dEstaing": "Valéry", "Hollande": "François", "Macron": "Emmanuel", "Mitterrand": "François", "Sarkozy": "Nicolas"}
+
+def association_nom_prenom(listeP):
+    pren = []
+    for x in listeP:
+        pren.append(prenomP[x])
+    
+    return pren
+
+#--------------------------------------------|
+#Fonction quireprend l'intégralité des fichiers txt du dossier "speeches" et les re-crées dans
+#un second dossier nommé "cleaned", cette fois tout en minuscules
+
+def recreation_min(fichier):
+    
+    for file in fichier:
+
+        f = open(f"speeches\{file}", "r", encoding = "utf-8")
+        g = open(f"cleaned\{file}", "w", encoding = "utf-8")
+        for x in f:
+    
+            g.write(str(str.lower(x)))
+    f.close()
+    
+    return os.listdir("cleaned")
+
+#--------------------------------------------|
+
+characters = "!?.,;()[]_'-"
+
+def triPonc(fichier):
+    
+    files_names = []
+    
+    for file in fichier:
+        f_init = open(f"cleaned\{file}", "r", encoding = "utf-8")
+        lecture = f_init.readlines()
+        
+    for x in lecture:
+        
+        for y in range(len(characters)):
+            
+            if characters[y] in characters[:-3]:
+                x = x.replace(characters[y], "")
+                
+            else:
+                x = x.replace(characters[y], " ")
+                x = x.replace('\n', " ")
+            print(x)
+            
+            f2 = open(f"cleaned\{file}", "a", encoding = "utf-8")
+            f2.write(x)
+        f2.close()
+    f_init.close()
+        
+    return os.listdir("cleaned")
+
+#-------------------------------------------------------------------------------------------------------------|
+#PROGRAMME
+#--------------------------------------------|
+#PROGRAMME
+
+ensemble_des_fichiers_init = os.listdir("speeches")
+#fichier_mini = recreation_min(ensemble_des_fichiers_init)
+#fichier_clea = triPonc(fichier_mini)
+
+#--------------------------------------------|
+#FONCTIONS IDF/TF
+
+
+def TF_chaine(chaine:str):
+
+    assert isinstance(chaine, str)
+    chaine = chaine + " "
+    dico = {}
+    mot = ""
+    for lettres in chaine: 
+        
+        if lettres == " ":
+            
+            if mot in dico:
+                dico[mot] = dico[mot] + 1
+                mot = ""
+                
+            else:
+                dico[mot] = 1
+                mot=""
+            
+        else:
+            mot = mot + lettres
+    return dico
+
+#--------------------------------------------|
+
+def TF_fichier(fichier, ouv):
+
+    chaine = chaine + " "
+    dico = {}
+    mot = ""
+    f = open(f"{ouv}\{fichier}", "r", encoding = "utf-8")
+    
+    for chaine in fichier:
+        for lettres in chaine:
+            
+            if lettres == " ":
+                
+                if mot in dico:
+                    
+                    dico[mot] = dico[mot] + 1
+                    mot = ""
+                
+                else:
+                    dico[mot] = 1
+                    mot=""
+            
+            else:
+                mot = mot + lettres
+    f.close()
+    return dico
+
+#--------------------------------------------|
+
+def TF_ensemble(fichier, ouv):
+    
+    dico = {}
+    mot = ""
+    
+    for file in fichier:
+
+        f = open(f"{ouv}\{file}", "r+", encoding = "utf-8")
+        
+        for x in f:
+            for lettres in x:
+                if lettres == " ":
+                    
+                    if mot in dico:
+                        dico[mot] = dico[mot] + 1
+                        mot = ""
+                    
+                    else:
+                        dico[mot] = 1
+                        mot=""
+                else:
+                    mot = mot + lettres
+    return dico
+
+
+#--------------------------------------------|
+
+
+def IDF_ensemble(fichier, ouv):
+    
+    dico = {}
+    mot = ""
+
+    for file in fichier:
+        
+        list_verif = []
+        
+        f = open(f"{ouv}\{file}", "r", encoding = "utf-8")
+        
+        for x in f:
+        
+            
+            for lettres in x:
+    
+                
+                if lettres == " ":
+                    
+                    if mot in dico and mot not in list_verif:
+                        
+ 
+                        list_verif.append(mot)
+                        dico[mot] = dico[mot] + 1
+                        mot = ""
+                        
+
+                    
+                    elif mot not in dico:
+                        list_verif.append(mot)
+                        dico[mot] = 1
+                        mot = ""
+                        
+                    else:
+                        mot = ""
+
+                else:
+                    mot = mot + lettres
+                    
+    for y in dico:
+        dico[y] = log((len(fichier) / dico[y]) + 1)
+     
+    return dico
+
+#--------------------------------------------|
+
+def TF_IDF_ensemble(fichier, ouv):
+    dico_TF = TF_ensemble(fichier, ouv)
+    dico_IDF = IDF_ensemble(fichier, ouv)
+    
+    
+    for x in dico_TF:
+        dico_IDF[x] = dico_TF[x] * dico_IDF[x]
+    
+    return dico_IDF
+
+#____________________________________________________________________________________________________|
+#--------------------------------------------|
+#STOCK
+Direc = 1
+Direc1 = 1
+
+fichier_selec = ensemble_des_fichiers_init #Fichiers désignés par l'utilisateur, par défaut l'ensemble des fichiers
+
+r = True #Sert de passage à certaines boucles while
+resultat = [] #Liste contenant les résultats des différentes requêtes
+
+option_affichage = [["||| Texte(s) en traitement", f"STATUT: {ensemble_des_fichiers_init}", ""],
+                    ["||| Information(s) relevée(s): ", f"{resultat}", ""],
+                    ]
+
+#--------------------------------------------|
+
+def affichage_console(dec, cod, enr):
+    
+    print("".rjust(3), end=" ")  # rjust() justifie à droite le contenu de la chaîne
+    
+    for i in range(47):
+        print("_", end=" ")
+    print() # On passe à la ligne
+    print("_________________________________________________________________________________________________")
+    print()
+    
+    for y in range(dec):
+        
+        print(ascii_uppercase[y].rjust(3),end=" ") 
+        
+        for x in range(cod):
+
+            print(enr[y][x], end = "   ")
+        print("|||".rjust(1),end=" ")
+        print()
+        print("_________________________________________________________")
+        print()
+        
+    return " "
+
+#---------------------------------------\
+#PROGRAMME PRINCIPAL
+
+input("Programmme en attente, rentrer une touche pour lancer:  ")
+
+#---------------------------------------\
+#SECTION0_
+
+while Direc == 1 :
+    time.sleep(1) 
+    print("Bienvenue au sein de se programme (encore temporaire)") 
+    time.sleep(3)
+    
+    print("Voici les fichiers prêt à être traités (fichiers texte dans 'speeches')")
+    print()
+    arr = os.listdir("speeches")
+    for file in arr:
+        print("- " + file)
+        time.sleep(0.5)
+    
+    time.sleep(4)
+
+#---------------------------------------\
+#SECTION1_
+
+    print(affichage_console(1, 3, option_affichage))
+    
+    fichier_selec = triPonc(recreation_min(fichier_selec))
+
+#---------------------------------------\
+#SECTION2_
+    
+    while Direc1 == 1:
+        print()
+        print(affichage_console(2, 3, option_affichage))
+        time.sleep(2)
+        print()
+        print("Voici les différentes fonctions de recherche à votre disposition")
+        time.sleep(1)
+        codeur_appel = ""
+        
+        while codeur_appel not in ["a", "b", "c", "d", "e", "f"]:
+            print()
+            print("||_ a_.     -Rechercher les mots les moins importants parmi les fichiers (mot(s) dont le TD-IDF = 0)")
+            print("||_ b_.     -Rechercher les mots les plus importants parmi les fichiers (mot(s) dont le TD-IDF est élévé") 
+            print("||_ c_.     -Rechercher des mots étant le plus répétés par un des présidents de votre choix") 
+            print("||_ d_.     -Indiquer le ou les noms des présidents ayant mentionnés un terme de votre choix (dont celui qui l'a le plus répété, mis en valeur")
+            print("||_ e_.     -Indiquer le premier président a avoir mentionné un terme de votre choix")
+            print("||_ f_.     -Rechercher les mots dont tous les présidents ont évoqués, en excluant les mots non-importants")
+            print()
+        
+            codeur_appel = str(input("Veuillez à l'aide des codes ci-dessus, sélectionner une opération (EX: 'a'):  "))
+
+#---------------------------------------\
+            
+        if codeur_appel == "a":
+            print()
+            print("Recherche des mots les moins importants (mots dont le TD-IDF = 0)")
+            
+            res = []
+            for v in TF_IDF_ensemble(fichier_selec, "cleaned"):
+                if TF_IDF_ensemble(fichier_selec, "cleaned")[v] == 0:
+                    res.append(v)
+                    
+            resultat.append(res)
+            print(res)
+            time.sleep(3)
+
+#---------------------------------------\
+            
+        elif codeur_appel == "b":
+            print()
+            print("Recherche du où des mots les plus importants (mots dont le TD-IDF //\)")
+            res = ""
+            maxi = 0
+            for v in TF_IDF_ensemble(fichier_selec, "cleaned"):
+                if TF_IDF_ensemble(fichier_selec, "cleaned")[v] > maxi:
+                    maxi = TF_IDF_ensemble(fichier_selec, "cleaned")[v]
+                    res = v
+                
+                if TF_IDF_ensemble(fichier_selec, "cleaned")[v] == maxi:
+                    res += v
+            
+            resultat.append(res)
+            print(res)
+            time.sleep(3)
+
