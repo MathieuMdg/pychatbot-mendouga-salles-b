@@ -164,6 +164,24 @@ for files in files_cleaned:
     dictionnaire_files[files] = TF(lecture("./cleaned", files))
     print(dictionnaire_files)
 
+def produit_scalaire(matrice1:list, matrice2:list):
+    scalaire = []
+    for i in range(len(matrice1)):
+        for j in range(len(matrice1[i])):
+            scalaire.append(matrice1[i][j] * matrice2[i][j])
+    return scalaire
+
+
+def norme_vecteur(matrice: list):
+    norme = 0
+    for i in range(len(matrice)):
+        norme += matrice[i] * matrice[i]
+    return sqrt(norme)
+
+def similarite(vecteur1:list, vecteur2:list):
+    similarite = produit_scalaire(vecteur1, vecteur2) / (norme_vecteur(vecteur1) * norme_vecteur(vecteur2))
+    return similarite
+
 #_______________________________________________________________________________________________________________________________________________________|
 
 def TF(chaine:str):
@@ -285,6 +303,8 @@ def triPonc():
 
 
     return None
+
+
 
 #FONCTIONS
 
