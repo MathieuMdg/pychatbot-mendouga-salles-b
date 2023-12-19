@@ -573,6 +573,37 @@ while Direc != 0 :
         elif codeur_appel == "c":
             TF(fichier_selec, "cleaned")
             print()
+            nompresident_discours = {} #Créer un dictionnaire associant chaque nom de président à son/ses discours
+            for nom_president in prenomP:
+                L = []
+                for nom_fichier in ensemble_des_fichiers_init:
+                    if nom_president in nom_fichier:
+                        L.append(nom_fichier)
+                nompresident_discours[nom_president] = L
+            president = str(input("Choisir un président : "))
+            while president not in prenomP:
+                print("Ce président ne peut pas être choisi.")
+                president = str(input("Choisir un président : "))
+            nombre_mot = int(input("Choisir un nombre de mot : "))
+            print("Recherche des", nombre_mot, "mots les plus répétés par le président", prenomP[president],president, "...")
+            TF = TF_ensemble(nompresident_discours[president], "./cleaned")
+            occ_max = 0
+            for mots in TF:
+                if TF[mots] > occ_max:
+                    occ_max = TF[mots]
+            Liste = []
+            compteur = 0
+            for mots in TF:
+                if TF[mots] >= occ_max:
+                    if compteur < nombre_mot:
+                        Liste.append(mots)
+                        compteur += 1
+                else:
+                    occ_max -= 1
+            print("Les mots les plus répétés par le président", prenomP[president], president, "sont :")
+            print(Liste)
+
+            time.sleep(10)
 
 #---------------------------------------\
             
