@@ -19,6 +19,23 @@ liste_MI = []
 
 #____________________________________________________________________________________________________|
 #--------------------------------------------|
+
+# Affiche le contenu d'un fichier donné dans un répertoire donné
+def lecture(directory, file):
+    lecture = ""
+    for filename in os.listdir(directory):
+        if file in filename:
+            f = open(directory + "/" + file, 'r', encoding="utf-8")
+            contenu = f.readlines()
+            for line in contenu:
+                L = line.split("\n")
+                ligne = ""
+                for i in L:
+                    ligne = ligne + " " + i
+                lecture = lecture + ligne
+    return lecture
+   
+#--------------------------------------------|
 #Fonction qui extrait à partir des noms des fichiers, le nom des présidents.
 
 def extraction_nom():
@@ -571,7 +588,41 @@ while Direc != 0 :
 #---------------------------------------\
             
         elif codeur_appel == "c":
-            TF(fichier_selec, "cleaned")
+            TF_ensemble(fichier_selec, "cleaned")
+            print()
+            nompresident_discours = {}  # Créer un dictionnaire associant chaque nom de président à son/ses discours
+            for nom_president in prenomP:
+                L = []
+                for nom_fichier in ensemble_des_fichiers_init:
+                    if nom_president in nom_fichier:
+                        L.append(nom_fichier)
+                nompresident_discours[nom_president] = L
+            president = str(input("Choisir un président : "))
+            while president not in prenomP:
+                print("Ce président ne peut pas être choisi.")
+                president = str(input("Choisir un président : "))
+            nombre_mot = int(input("Choisir un nombre de mot : "))
+            print("Recherche des", nombre_mot, "mots les plus répétés par le président", prenomP[president], president,
+                  "...")
+            for i in nompresident_discours[president]:
+                occ_max = 0
+                TF = TF_chaine(lecture("./cleaned", i))
+                for mots in TF:
+                    if TF[mots] > occ_max:
+                        occ_max = TF[mots]
+                Liste = []
+                compteur = 0
+                for mots in TF:
+                    if TF[mots] >= occ_max:
+                        if compteur < nombre_mot:
+                            Liste.append(mots)
+                            compteur += 1
+                    else:
+                        occ_max -= 1
+                print("Les mots les plus répétés par le président", prenomP[president], president, "dans le texte", i, "sont :")
+                print(Liste)
+
+            time.sleep(10)
             print()
 
 #---------------------------------------\
