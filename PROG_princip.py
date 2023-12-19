@@ -41,6 +41,7 @@ def extraction_nom():
     return liste_nomP
 
 #--------------------------------------------|
+#Fonction qui associe un nom à un prénom, à l'aide d'un dictionnaire predéfinie.
 prenomP = {"Chirac": "Jacques", "Giscard dEstaing": "Valéry", "Hollande": "François", "Macron": "Emmanuel", "Mitterrand": "François", "Sarkozy": "Nicolas"}
 
 def association_nom_prenom(listeP):
@@ -51,7 +52,7 @@ def association_nom_prenom(listeP):
     return pren
 
 #--------------------------------------------|
-#Fonction quireprend l'intégralité des fichiers txt du dossier "speeches" et les re-crées dans
+#Fonction qui reprend l'intégralité des fichiers txt du dossier "speeches" et les re-crées dans
 #un second dossier nommé "cleaned", cette fois tout en minuscules
 
 def recreation_min(fichier):
@@ -69,7 +70,7 @@ def recreation_min(fichier):
 
 
 #--------------------------------------------|
-#Fonction principal, celle-ci modifie et créée au sein du fichier "cleaned",  un texte en minuscule et sans ponctuation.
+#Fonction reprenant un corpus de document, celle-ci modifie et créée au sein du fichier "cleaned",  un texte en minuscule et sans ponctuation.
 
 Ponc = "!?.,;-()[]_'{}=+~&\/"
 
@@ -172,6 +173,7 @@ def TF_fichier(fichier, ouv):
     return dico
 
 #--------------------------------------------|
+#Recherche le Tf pour chaque documents dans un corpus
 
 def TF_ensemble(fichier, ouv):
     
@@ -201,7 +203,7 @@ def TF_ensemble(fichier, ouv):
 
 
 #--------------------------------------------|
-
+#Recherche l'IDF au sein d'un corpus
 
 def IDF_ensemble(fichier, ouv):
     
@@ -244,6 +246,7 @@ def IDF_ensemble(fichier, ouv):
     return dico
 
 #--------------------------------------------|
+#Fonction reprenant les fonctions TF et IDF, pour ainsi calculer le TF-IDF, au sein d'un corpus.
 
 def TF_IDF_ensemble(fichier, ouv):
     lanceur_TF = TF_ensemble(fichier, ouv)
@@ -273,6 +276,7 @@ def TF_IDF_ensemble(fichier, ouv):
 """###--_____________________-...PARTIE_2...-_____________________--"""       #|                                                                       |
 #L_____________________________________________________________________________|
 #__1.
+#Fonction permettant de dissocier les mots d'une phrase donnée, et les stockes dans une liste.
 
 def listage_mot_quest(quest):
     assert isinstance(quest, str)
@@ -309,7 +313,7 @@ def recherche_ins(quest, fichier, ouv):
 
 #--------------------------------------------|
 #__3.
-#
+#Fonction effectuant le calcul du TF-IDF, mais reprenant cette fois le TF de la question/phrase donnée en paramètre
 #De plus celui-ci détermine aussi le mot avec le plus haut score TF_IDF 
 
 def TF_IDF_quest(quest, fichier, ouv):
@@ -513,13 +517,12 @@ while Direc != 0 :
         time.sleep(2)
         codeur_appel = ""
         
-        while codeur_appel not in ["a", "b", "c", "d", "e", "A"]:
+        while codeur_appel not in ["a", "b", "c", "d", "A"]:
             print()
             print("||_ a_.     -Rechercher les mots les moins importants parmi les fichiers (mot(s) dont le TD-IDF = 0)")
             print("||_ b_.     -Rechercher les mots les plus importants parmi les fichiers (mot(s) dont le TD-IDF est élévé") 
             print("||_ c_.     -Rechercher des mots étant le plus répétés par un des présidents de votre choix") 
             print("||_ d_.     -Indiquer le ou les noms des présidents ayant mentionnés un terme de votre choix (dont celui qui l'a le plus répété, mis en valeur")
-            print("||_ e_.     -Indiquer le premier président a avoir mentionné un terme de votre choix")
             print()
             print("Fonction CHATBOT")
             print("||_ A_.     -Poser une question")
@@ -572,11 +575,33 @@ while Direc != 0 :
             
         elif codeur_appel == "d":
             print()
-
-#---------------------------------------\
+            print("Indiquer le ou les noms des présidents ayant mentionnés un terme de votre choix (dont celui qui l'a le plus répété, mis en valeur")
+            ter_decod = ""
+            res_temp = []
+            val_max = [-1, ""]
+            while ter_decod == "":
+                ter_decod = str(input("Veuillez rentrer un terme/mot :  "))
             
-        elif codeur_appel == "e":
-            print()
+            time.sleep(2)
+            lanceur_TF = TF_ensemble(fichier_selec_clean, "speeches")
+            for x in range(len(fichier_selec_clean)):
+                if ter_decod in lanceur_TF[x]:
+                    res_temp.append(fichier_selec_clean[x])
+                    if lanceur_TF[x][ter_decod] > val_max[0]:
+                        val_max[0] = lanceur_TF[x][ter_decod]
+                        val_max[1] = fichier_selec_clean[x]
+            print(res_temp)
+            print(val_max)
+            if len(res_temp) == 1:
+                print(f"Le seul président ayant mentionné '{ter_decod}' dans un de ses discours est {res_temp[0]}, l'ayant répété {val_max[0]} fois.")
+            elif len(res_temp) > 1:
+                print(f"les présidents ayant mentionné '{ter_decod}' dans un de ses discours sont:")
+                for y in range(len(res_temp)):
+                    print(f"- {res_temp[y]}")
+                print(f"{val_max[1]} l'ayant répété le plus de fois, avec {val_max[0]}.")
+            else:
+                print(f"Aucun président n'a prononcé '{ter_decod}' dans un de ses discours")
+            time.sleep(9)
 
 #---------------------------------------\
         
