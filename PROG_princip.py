@@ -1,3 +1,6 @@
+#Salles Théophile, Mathieu Mendouga
+#______________.
+#PROJET_ChatBot.
 #FONCTIONS
 
 from math import log10
